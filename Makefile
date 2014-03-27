@@ -1,4 +1,4 @@
-include $(HIPACE)/config/Makefile.common
+include $(HDF2ROOT)/config/Makefile.common
 
 basedirs      = src 
 
