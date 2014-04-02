@@ -5,25 +5,16 @@ LIBDIR        = $(BASEDIR)/lib
 BINDIR        = $(BASEDIR)/bin
 
 # ROOT flags
+#include $(ROOTSYS)/etc/Makefile.arch
+include $(BASEDIR)/config/Makefile.arch
 ROOTCFLAGS   := $(shell root-config --cflags)
-ROOTLIBS     := $(shell root-config --libs)
+ROOTLIBDIR   := $(shell root-config --libdir)
+ROOTLIBS     := -L$(ROOTLIBDIR) -lCore -lRIO -lTree 
 
 # HDF5 FLAGS
-HDF5CFLAGS    = -I${HDF5CPP}/include
-HDF5LIBS      = -L${HDF5CPP}/lib -lhdf5 -lhdf5_cpp
+HDF5CFLAGS    = -I$(HDF5CPP)/include
+HDF5LIBS      = -L$(HDF5CPP)/lib -lhdf5 -lhdf5_cpp
 
 LIB           = hdf2root
 H2RLIBS       = -L$(LIBDIR) -l$(LIB)
 
-# Compiler flags
-CXXFLAGS   := -O2 -Wall -fPIC
-LDFLAGS    := 
-SOFLAGS    := -shared
-
-ifeq ($(PLATFORM),macosx)
-MACOSX_MINOR := $(shell sw_vers | sed -n 's/ProductVersion://p' | cut -d . -f 2)
-MACOSXTARGET := 10.$(MACOSX_MINOR)
-CXXFLAGS     := -O2 -pipe -Wall -Wno-unused-variable 
-LDFLAGS    := -mmacosx-version-min=$(MACOSXTARGET)
-SOFLAGS    := -dynamiclib -single_module -undefined dynamic_lookup -install_name
-endif

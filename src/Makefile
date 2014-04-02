@@ -1,26 +1,40 @@
 include $(HDF2ROOT)/config/Makefile.common
 
-MODULES  = hdf2root_methods
+OBJS  = hdf2root_methods
 
 EXES = hdf2root
 
-CXX       = g++
-CXXFLAGS     += $(ROOTCFLAGS) $(HDF5CFLAGS) -I$(INCDIR) -I. 
-LIBS          = $(ROOTLIBS) $(HDF5LIBS)
+CXXFLAGS     += $(HDF5CFLAGS) -I$(INCDIR) -I. 
+LIBS         := $(ROOTLIBS) $(HDF5LIBS)
 
+SHLIBFILE    := lib$(LIB).$(DllSuf)
 
-all: modules lib bin
+all: lib linklib bin
 
-modules: $(addsuffix .o,$(MODULES))
+obj: $(addsuffix .o,$(OBJS))
 
-lib: $(LIBDIR)/lib$(LIB).so
+lib: $(LIBDIR)/$(SHLIBFILE)
+
+# Rule to set up a symbolic links to the created shared library
+linklib:
+	@if [[ ( ( `root-config --platform` == "macosx" ) && \
+			( ! -e lib/lib$(LIB).1.dylib ) ) || \
+			( ! -e lib/lib$(LIB).1.so ) ]]; then \
+		printf "Setting up soft links to the HDF2ROOT library ... "; \
+		ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.so; \
+		if [[ `root-config --platform` == "macosx" ]]; then \
+			ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.dylib; \
+		fi; \
+		echo "Done"; \
+	fi
+
+info:	
+	@echo "Library: $(LIBDIR)/$(SHLIBFILE)"
+	@echo "SOFLAGS = $(SOFLAGS)"
+	@echo "LDFLAGS = $(LDFLAGS)"
+	@echo "CURDIR  = $(CURDIR)"
 
 bin: $(addsuffix .e,$(EXES))
-
-$(LIBDIR)/lib$(LIB).so: $(addsuffix .o,$(MODULES)) 
-	@mkdir -p $(LIBDIR)
-	@echo "Linking shared library $@"
-	$(CXX) $(SOFLAGS) $(LDFLAGS) $(LIBS) $^ -o $@
 
 %.o: %.cc
 	@echo "Compiling $<"
@@ -28,15 +42,29 @@ $(LIBDIR)/lib$(LIB).so: $(addsuffix .o,$(MODULES))
 
 %.e: %.o
 	@mkdir -p $(BINDIR)
-	@echo "Linking $@"
-	$(CXX) $(LDFLAGS) $< -o $@  -L. $(LIBS) $(H2RLIBS)
-	@ln -sf $(SRCDIR)/$@ $(BINDIR)/$(subst .e,,$@)
+	@echo "Linking $<"
+	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) $(H2RLIBS)
+	ln -sf $(SRCDIR)/$@ $(BINDIR)/$(subst .e,,$@)
+
+
+$(LIBDIR)/$(SHLIBFILE): $(addsuffix .o,$(OBJS))
+	@echo "Building shared library $@ ... "
+	@mkdir -p $(LIBDIR)
+ifeq ($(PLATFORM),macosx)
+	$(LD) $(SOFLAGS) $@ $< -o $@ $(LIBS)
+else
+	$(LD) $(SOFLAGS) $< -o $(LIBDIR)/$(SHLIBFILE) $(LIBS)
+endif
+#	ln -fs $(SHLIBFILE) lib/lib$(LIB).1.so
+	@echo "Done"
+
 
 clean:
 	@rm -f *.o
 	@rm -f *.e
 	@rm -f *~
-	@rm -f $(LIBDIR)/lib$(LIB).so
+	@rm -f $(LIBDIR)/$(SHLIBFILE)
 	@for file in $(EXES); do (rm -f $$file.e); done
 	@for file in $(EXES); do (rm -f $(EXESDIR)/$$file); done
 
+.PHONY : obj lib bin clean info
