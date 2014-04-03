@@ -1,9 +1,6 @@
-include $(HDF2ROOT)/config/Makefile.common
-
 basedirs      = src 
 
 all: build
-
 
 build: 
 	@for dir in $(basedirs); do (cd $$dir; make); done

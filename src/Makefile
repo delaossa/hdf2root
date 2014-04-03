@@ -9,30 +9,11 @@ LIBS         := $(ROOTLIBS) $(HDF5LIBS)
 
 SHLIBFILE    := lib$(LIB).$(DllSuf)
 
-all: lib linklib bin
+all: lib bin
 
 obj: $(addsuffix .o,$(OBJS))
 
 lib: $(LIBDIR)/$(SHLIBFILE)
-
-# Rule to set up a symbolic links to the created shared library
-linklib:
-	@if [[ ( ( `root-config --platform` == "macosx" ) && \
-			( ! -e lib/lib$(LIB).1.dylib ) ) || \
-			( ! -e lib/lib$(LIB).1.so ) ]]; then \
-		printf "Setting up soft links to the HDF2ROOT library ... "; \
-		ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.so; \
-		if [[ `root-config --platform` == "macosx" ]]; then \
-			ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.dylib; \
-		fi; \
-		echo "Done"; \
-	fi
-
-info:	
-	@echo "Library: $(LIBDIR)/$(SHLIBFILE)"
-	@echo "SOFLAGS = $(SOFLAGS)"
-	@echo "LDFLAGS = $(LDFLAGS)"
-	@echo "CURDIR  = $(CURDIR)"
 
 bin: $(addsuffix .e,$(EXES))
 
@@ -67,4 +48,24 @@ clean:
 	@for file in $(EXES); do (rm -f $$file.e); done
 	@for file in $(EXES); do (rm -f $(EXESDIR)/$$file); done
 
-.PHONY : obj lib bin clean info
+# Rule to set up a symbolic links to the created shared library
+linklib:
+	@if [[ ( ( `root-config --platform` == "macosx" ) && \
+			( ! -e lib/lib$(LIB).1.dylib ) ) || \
+			( ! -e lib/lib$(LIB).1.so ) ]]; then \
+		printf "Setting up soft links to the HDF2ROOT library ... "; \
+		ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.so; \
+		if [[ `root-config --platform` == "macosx" ]]; then \
+			ln -sf $(SHLIBFILE) $(LIBDIR)/lib$(LIB).1.dylib; \
+		fi; \
+		echo "Done"; \
+	fi
+
+info:	
+	@echo "Library: $(LIBDIR)/$(SHLIBFILE)"
+	@echo "SOFLAGS = $(SOFLAGS)"
+	@echo "LDFLAGS = $(LDFLAGS)"
+	@echo "CURDIR  = $(CURDIR)"
+
+
+.PHONY : obj lib bin clean info linklib
