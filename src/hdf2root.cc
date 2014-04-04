@@ -41,7 +41,7 @@ int main (int argc,char *argv[]) {
     if(arg.Contains("--help")) {
       help();
       return 0;
-    } else if(arg.EndsWith(".h5")) {
+    } else if(arg.EndsWith(".h5") || arg.EndsWith(".hdf5")) {
       inFilename = arg;
     } else if(arg.EndsWith(".root")) {
       outFilename = arg;
@@ -61,9 +61,14 @@ int main (int argc,char *argv[]) {
     outFilename = inFilename;
     outFilename.ReplaceAll("|","");
     outFilename.ReplaceAll(" ","_");
-    outFilename.ReplaceAll(".h5",".root");
+  
+    if(outFilename.Contains(".h5"))
+      outFilename.ReplaceAll(".h5",".root");
+    else if(outFilename.Contains(".hdf5"))
+      outFilename.ReplaceAll(".hdf5",".root");
+    
   }
-     
+  
   // Open input HDF5 file
   H5File h5 = H5File(inFilename,H5F_ACC_RDONLY);
   
