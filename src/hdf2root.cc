@@ -18,10 +18,10 @@ using namespace H5;
 
 
 void help() {
-  printf("\n Usage: hdf2root [--seq] [--ver] [--help, -h] <inFile.h5> <outFile.root(=inFile.root)>\n");
+  printf("\n Usage: hdf2root [--help, -h] [--seq] [--ver] <inFile.h5> <outFile.root(=inFile.root)>\n");
   printf("\n  %15s  %s ","--seq","Enables sequential mode.");
   printf("\n  %15s  %s ","--ver","Enables print out.");
-  printf("\n  %15s  %s ","--help, -h","Enables print out.");
+  printf("\n  %15s  %s ","--help, -h","Shows this message.");
   printf("\n\n");
 }
 
