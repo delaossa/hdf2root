@@ -88,7 +88,7 @@ int main (int argc,char *argv[]) {
   attrTrees.push_back(new TTree("root_att","Attributes of root group"));
   gIdx++;
   
-  // Recirsively check if there are other groups in root group
+  // Recursively check if there are other groups in root group
   for(UInt_t ig=0;ig<gIdx;ig++) {
     for(UInt_t i=0;i<groups[ig]->getNumObjs();i++) {
       if(H5G_GROUP == groups[ig]->getObjTypeByIdx(i)) {

@@ -166,9 +166,9 @@ void GroupToTree(Group *group, TTree *dataTree, TTree *attrTree, Bool_t ver, Boo
     // Prepare the description of the TTree branch of this dataset.
     // ------------------------------------------------------------
     // ACHTUNG!: There is a difference on how the data will stored in TTree:
-    // Sequentially: First dimension of arrays serves as "event index"
-    // of the TTree looping.
-    // Non-Seq.: First dimension is treated as any other and TTree won't loop.
+    // Sequentially: The first dimension of the array serves as an "event index"
+    // for the TTree looping.
+    // Non-Seq.: The first dimension is treated as any other and TTree won't loop.
 
     dataNames[iN].ReplaceAll("|","");
     dataNames[iN].ReplaceAll(" ","_");
@@ -496,9 +496,9 @@ void GroupToTree(Group *group, TTree *dataTree, Bool_t seq, Bool_t ver) {
     // Prepare the description of the TTree branch of this dataset.
     // ------------------------------------------------------------
     // ACHTUNG!: There is a difference on how the data will stored in TTree:
-    // Sequentially: First dimension of arrays serves as "event index"
-    // of the TTree looping.
-    // Non-Seq.: First dimension is treated as any other and TTree won't loop.
+    // Sequentially: The first dimension of the array serves as an "event index"
+    // for the TTree looping.
+    // Non-Seq.: The first dimension is treated as any other and TTree won't loop.
 
     dataNames[iN].ReplaceAll("|","");
     dataNames[iN].ReplaceAll(" ","_");
