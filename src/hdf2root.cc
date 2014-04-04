@@ -18,9 +18,10 @@ using namespace H5;
 
 
 void help() {
-  printf("\n Usage: hdf2root [--seq] <inFile.h5> <outFile.root(=inFile.root)>\n");
+  printf("\n Usage: hdf2root [--seq] [--ver] [--help, -h] <inFile.h5> <outFile.root(=inFile.root)>\n");
   printf("\n  %15s  %s ","--seq","Enables sequential mode.");
   printf("\n  %15s  %s ","--ver","Enables print out.");
+  printf("\n  %15s  %s ","--help, -h","Enables print out.");
   printf("\n\n");
 }
 
@@ -38,7 +39,7 @@ int main (int argc,char *argv[]) {
   for(int l=1;l<argc;l++){
     TString arg = argv[l];
    
-    if(arg.Contains("--help")) {
+    if(arg.Contains("--help") || arg.Contains("-h")) {
       help();
       return 0;
     } else if(arg.EndsWith(".h5") || arg.EndsWith(".hdf5")) {
@@ -51,7 +52,7 @@ int main (int argc,char *argv[]) {
       VER = kTRUE;
     } 
   }
-
+  
   cout << "Converting " << inFilename.Data() << " ... " << endl;
   
   if(inFilename=="\0")
